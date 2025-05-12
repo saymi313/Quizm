@@ -1,0 +1,49 @@
+# app/.github/workflows/deploy.yml
+name: Build & Deploy to Minikube
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build-and-deploy:
+    runs-on: self-hosted
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Configure Docker for Minikube
+        run: |
+          eval $(minikube docker-env)
+
+      - name: Build & push backend
+        run: |
+          docker build -t usairamsaeed/quiz-backend:latest app/backend
+          echo "${{ secrets.DOCKERHUB_PASS }}" \
+            | docker login -u "${{ secrets.DOCKERHUB_USER }}" --password-stdin
+          docker push usairamsaeed/quiz-backend:latest
+
+      - name: Build & push frontend
+        run: |
+          docker build -t usairamsaeed/quiz-frontend:latest app/frontend
+          docker push usairamsaeed/quiz-frontend:latest
+
+      - name: Create namespace & Secret from .env
+        run: |
+          # create namespace if missing
+          kubectl create namespace quiz-app --dry-run=client -o yaml \
+            | kubectl apply -f -
+          # recreate Secret from your local .env (never touches GitHub!)
+          kubectl delete secret quiz-backend-secret -n quiz-app \
+            --ignore-not-found
+          kubectl create secret generic quiz-backend-secret \
+            --namespace=quiz-app \
+            --from-env-file=app/.env
+
+      - name: Apply Kubernetes manifests
+        run: |
+          kubectl apply -f app/k8s/backend-deployment.yaml
+          kubectl apply -f app/k8s/backend-service.yaml
+          kubectl apply -f app/k8s/frontend-deployment.yaml
+          kubectl apply -f app/k8s/frontend-service.yaml

@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: quiz-frontend
+  namespace: quiz-app
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: quiz-frontend
+  template:
+    metadata:
+      labels:
+        app: quiz-frontend
+    spec:
+      containers:
+      - name: frontend
+        image: localhost:5000/usairamsaeed/quiz-frontend:latest
+        ports:
+        - containerPort: 80
