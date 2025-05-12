@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: quiz-frontend
-  namespace: quiz-app
+  namespace: quizapp
 spec:
   replicas: 2
   selector:
@@ -15,6 +15,6 @@ spec:
     spec:
       containers:
       - name: frontend
-        image: localhost:5000/usairamsaeed/quiz-frontend:latest
+        image: usairamsaeed/quiz-frontend:latest  # Corrected from localhost:5000
         ports:
         - containerPort: 80

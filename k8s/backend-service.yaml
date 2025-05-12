@@ -1,23 +1,13 @@
-apiVersion: apps/v1
-kind: Deployment
+apiVersion: v1
+kind: Service
 metadata:
-  name: quiz-backend
-  namespace: quiz-app
+  name: quiz-backend-svc
+  namespace: quizapp
 spec:
-  replicas: 2
+  type: NodePort
   selector:
-    matchLabels:
-      app: quiz-backend
-  template:
-    metadata:
-      labels:
-        app: quiz-backend
-    spec:
-      containers:
-      - name: backend
-        image: localhost:5000/usairamsaeed/quiz-backend:latest
-        ports:
-        - containerPort: 5000
-        env:
-        - name: MONGODB_URI
-          value: "mongodb+srv://quiz:quiz1234@quizcluster.77x5zmd.mongodb.net/?retryWrites=true&w=majority&appName=QuizCluster"
+    app: quiz-backend
+  ports:
+  - port: 80
+    targetPort: 5000
+    nodePort: 30007
