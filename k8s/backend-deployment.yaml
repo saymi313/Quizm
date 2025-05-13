@@ -6,7 +6,7 @@ metadata:
 spec:
   replicas: 2
   selector:
-    matchLabels:
+    matchLabels:  
       app: quiz-backend
   template:
     metadata:
