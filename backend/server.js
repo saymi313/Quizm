@@ -25,6 +25,9 @@ if (process.env.NODE_ENV === 'development') {
 }
 
 // Routes
+app.get('/', (req, res) => {
+  res.status(200).json({ message: 'QuizApp Backend is running!' });
+});
 app.use('/api/auth', authRoutes);
 app.use('/api/quiz', quizRoutes);
 app.use('/api/result', resultRoutes);

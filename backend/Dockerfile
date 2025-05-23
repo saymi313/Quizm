@@ -1,19 +1,15 @@
 FROM node:18-alpine
-
-# Set working directory inside container
 WORKDIR /app
-
-# Copy package.json and package-lock.json from the root app directory
-COPY package.json package-lock.json ./
-
-# Install dependencies (omit devDependencies for production)
+# Copy package files from backend directory
+COPY backend/package.json backend/package-lock.json ./
 RUN npm install --omit=dev
-
-# Copy backend source code into container
-COPY . .
-
+# Copy backend source code
+COPY backend/ .
+# Copy .env file from the app directory (one level up)
+COPY ../.env .
+# Install dotenv
+RUN npm install dotenv
 # Expose port
 EXPOSE 5000
-
-# Start the server
+# Start the server (adjust to your main file if needed)
 CMD ["node", "server.js"]
