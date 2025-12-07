@@ -1,6 +1,7 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:5000/api/quiz';
+const BASE_URL = import.meta.env.VITE_API_URL || "http://54.87.191.72:5001";
+const API_URL = `${BASE_URL}/api/quiz`;
 
 // Get auth token from local storage
 const getToken = () => {
