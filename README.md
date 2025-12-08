@@ -1,9 +1,9 @@
 # Quizm
 
-MERN-based quiz platform with user and admin workflows, quiz authoring, attempts, scoring, and leaderboards.
+React/Node quiz platform with user/admin workflows, quiz authoring, attempts, scoring, and leaderboards. Uses AWS DynamoDB for persistence.
 
 ## Structure
-- `backend/` – Express + MongoDB API (controllers, services, routes, middleware)
+- `backend/` – Express API (controllers, services, routes, middleware) backed by DynamoDB
 - `frontend/` – Vite/React UI (pages, components, services)
 - `k8s/` – Deployment/service manifests
 - `DeploymentInstructions/README.md` – Deployment guide (kept as-is)
@@ -15,8 +15,9 @@ cd backend && npm install
 cd ../frontend && npm install
 ```
 2) Environment  
-- Backend: set `.env` (Mongo URI, JWT secret, S3 creds if used, etc.)  
-- Frontend: set `.env` with `VITE_API_URL` pointing to the backend base URL (include `/api`).
+- Backend: `.env` with AWS creds/region and DynamoDB table names, plus JWT secret and S3 creds if uploads enabled  
+  - Common vars: `AWS_REGION`, `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `DYNAMO_USERS_TABLE`, `DYNAMO_QUIZZES_TABLE`, `JWT_SECRET`, `S3_BUCKET` (if used)  
+- Frontend: `.env` with `VITE_API_URL` pointing to the backend base URL (include `/api`)
 3) Run locally (two terminals)  
 ```sh
 cd backend && npm start
