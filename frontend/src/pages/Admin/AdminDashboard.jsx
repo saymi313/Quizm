@@ -22,11 +22,13 @@ const AdminDashboard = () => {
     const fetchQuizzes = async () => {
       try {
         const data = await quizService.getQuizzes();
-        setQuizzes(data);
+        // quizService.getQuizzes() now always returns an array
+        setQuizzes(Array.isArray(data) ? data : []);
         setLoading(false);
       } catch (error) {
         setError('Failed to load quizzes. Please try again later.');
         setLoading(false);
+        setQuizzes([]); // Ensure quizzes is always an array even on error
       }
     };
 

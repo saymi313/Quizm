@@ -36,6 +36,7 @@ export const createQuiz = async (quizData) => {
     questions,
     isPublished: quizData.isPublished || false,
     createdBy: quizData.createdBy,
+    imageUrl: quizData.imageUrl || null,
     createdAt: timestamp,
     updatedAt: timestamp,
   };
@@ -131,6 +132,12 @@ export const updateQuiz = async (id, updateData) => {
     updateExpressions.push('#isPublished = :isPublished');
     expressionAttributeNames['#isPublished'] = 'isPublished';
     expressionAttributeValues[':isPublished'] = updateData.isPublished;
+  }
+
+  if (updateData.imageUrl !== undefined) {
+    updateExpressions.push('#imageUrl = :imageUrl');
+    expressionAttributeNames['#imageUrl'] = 'imageUrl';
+    expressionAttributeValues[':imageUrl'] = updateData.imageUrl;
   }
 
   updateExpressions.push('#updatedAt = :updatedAt');

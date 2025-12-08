@@ -1,7 +1,20 @@
 import axios from 'axios';
 
-const BASE_URL = import.meta.env.VITE_API_URL || "http://54.87.191.72:5001";
-const API_URL = `${BASE_URL}/api/result`;
+// Get API URL with proper fallback
+const getBaseUrl = () => {
+  const envUrl = import.meta.env.VITE_API_URL;
+  // If VITE_API_URL is not set, use the backend URL from your deployment
+  if (!envUrl || envUrl === 'undefined') {
+    // Default to CloudFront backend URL
+    return 'https://d3niztflhdd0uf.cloudfront.net/api';
+  }
+  // Remove trailing slash if present
+  return envUrl.endsWith('/') ? envUrl.slice(0, -1) : envUrl;
+};
+
+const BASE_URL = getBaseUrl();
+// BASE_URL already includes /api, so we just append the endpoint
+const API_URL = `${BASE_URL}/result`;
 
 // Get auth token from local storage
 const getToken = () => {

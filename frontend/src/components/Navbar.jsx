@@ -8,13 +8,43 @@ import authService from "../services/authService"
 const Navbar = () => {
   const [user, setUser] = useState(null)
   const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false)
   const navigate = useNavigate()
   const location = useLocation()
 
   useEffect(() => {
-    const userInfo = localStorage.getItem("userInfo")
-    if (userInfo) {
-      setUser(JSON.parse(userInfo))
+    const updateUser = () => {
+      const userInfo = localStorage.getItem("userInfo")
+      if (userInfo) {
+        setUser(JSON.parse(userInfo))
+      } else {
+        setUser(null)
+      }
+    }
+    
+    updateUser()
+    
+    // Listen for auth changes (login/logout in-app) and storage changes (other tabs)
+    const handleAuthChange = () => {
+      updateUser()
+    }
+    
+    window.addEventListener('authChange', handleAuthChange)
+    window.addEventListener('storage', handleAuthChange)
+    
+    // Close dropdown when clicking outside
+    const handleClickOutside = (event) => {
+      if (!event.target.closest('.user-dropdown')) {
+        setIsDropdownOpen(false)
+      }
+    }
+    
+    document.addEventListener('click', handleClickOutside)
+    
+    return () => {
+      window.removeEventListener('authChange', handleAuthChange)
+      window.removeEventListener('storage', handleAuthChange)
+      document.removeEventListener('click', handleClickOutside)
     }
   }, [])
 
@@ -90,48 +120,59 @@ const Navbar = () => {
                   <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
                 </button>
 
-                <div className="relative group ml-2">
-                  <button className="flex items-center px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-gray-900 transition-colors">
+                <div className="relative user-dropdown ml-2">
+                  <button 
+                    onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                    className="flex items-center px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-gray-900 transition-colors"
+                  >
                     <div className="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center mr-2 font-semibold text-xs">
-                      {user.name.charAt(0).toUpperCase()}
+                      {user.name && user.name.charAt ? user.name.charAt(0).toUpperCase() : 'U'}
                     </div>
-                    <span className="mr-1">{user.name}</span>
-                    <ChevronDown className="h-4 w-4 text-gray-500" />
+                    <span className="mr-1">{user.name || 'User'}</span>
+                    <ChevronDown className={`h-4 w-4 text-gray-500 transition-transform ${isDropdownOpen ? 'rotate-180' : ''}`} />
                   </button>
-                  <div className="absolute right-0 mt-1 w-56 bg-white rounded-md shadow-lg border border-gray-200 overflow-hidden transform opacity-0 scale-95 group-hover:opacity-100 group-hover:scale-100 transition-all duration-200 origin-top-right z-50">
-                    <div className="py-2">
-                      <div className="px-4 py-2 border-b border-gray-100">
-                        <p className="text-sm font-medium text-gray-900">{user.name}</p>
-                        <p className="text-xs text-gray-500 truncate">{user.email}</p>
+                  {isDropdownOpen && (
+                    <div className="absolute right-0 mt-1 w-56 bg-white rounded-md shadow-lg border border-gray-200 overflow-hidden z-50">
+                      <div className="py-2">
+                        <div className="px-4 py-2 border-b border-gray-100">
+                          <p className="text-sm font-medium text-gray-900">{user.name || 'User'}</p>
+                          <p className="text-xs text-gray-500 truncate">{user.email || ''}</p>
+                        </div>
+                        <Link
+                          to="/profile"
+                          onClick={() => setIsDropdownOpen(false)}
+                          className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
+                        >
+                          Your Profile
+                        </Link>
+                        <Link
+                          to="/results"
+                          onClick={() => setIsDropdownOpen(false)}
+                          className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
+                        >
+                          Your Results
+                        </Link>
+                        <Link
+                          to="/settings"
+                          onClick={() => setIsDropdownOpen(false)}
+                          className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
+                        >
+                          Settings
+                        </Link>
+                        <div className="border-t border-gray-100 mt-1"></div>
+                        <button
+                          onClick={() => {
+                            setIsDropdownOpen(false)
+                            handleLogout()
+                          }}
+                          className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors flex items-center"
+                        >
+                          <LogOut className="mr-2 h-4 w-4" />
+                          Sign out
+                        </button>
                       </div>
-                      <Link
-                        to="/profile"
-                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
-                      >
-                        Your Profile
-                      </Link>
-                      <Link
-                        to="/results"
-                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
-                      >
-                        Your Results
-                      </Link>
-                      <Link
-                        to="/settings"
-                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
-                      >
-                        Settings
-                      </Link>
-                      <div className="border-t border-gray-100 mt-1"></div>
-                      <button
-                        onClick={handleLogout}
-                        className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors flex items-center"
-                      >
-                        <LogOut className="mr-2 h-4 w-4" />
-                        Sign out
-                      </button>
                     </div>
-                  </div>
+                  )}
                 </div>
               </div>
             ) : (
@@ -217,12 +258,12 @@ const Navbar = () => {
                 <div className="flex items-center px-3">
                   <div className="flex-shrink-0">
                     <div className="w-10 h-10 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-semibold">
-                      {user.name.charAt(0).toUpperCase()}
+                      {user.name && user.name.charAt ? user.name.charAt(0).toUpperCase() : 'U'}
                     </div>
                   </div>
                   <div className="ml-3">
-                    <div className="text-base font-medium text-gray-800">{user.name}</div>
-                    <div className="text-sm font-medium text-gray-500">{user.email}</div>
+                    <div className="text-base font-medium text-gray-800">{user.name || 'User'}</div>
+                    <div className="text-sm font-medium text-gray-500">{user.email || ''}</div>
                   </div>
                 </div>
                 <div className="mt-3 space-y-1 px-2">

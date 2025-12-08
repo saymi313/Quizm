@@ -61,7 +61,7 @@ const HomePage = () => {
             </div>
             <div className="md:w-1/2 flex justify-center">
               <img
-                src="/placeholder.svg?height=400&width=400"
+                src="/images/student-learning.jpeg"
                 alt="Students learning"
                 className="w-full max-w-md rounded-lg shadow-2xl transform rotate-2 hover:rotate-0 transition-transform duration-500"
               />
@@ -223,21 +223,21 @@ const HomePage = () => {
               {
                 name: "Alex Johnson",
                 role: "Student",
-                image: "/placeholder.svg?height=80&width=80",
+                image: "/images/alex.jpeg",
                 quote:
                   "Quizm has been an invaluable tool for my exam preparation. The variety of quizzes and detailed feedback have helped me identify my weak areas.",
               },
               {
                 name: "Sarah Williams",
                 role: "Teacher",
-                image: "/placeholder.svg?height=80&width=80",
+                image: "/images/sarah.jpeg",
                 quote:
                   "As an educator, I love using Quizm to create engaging assessments for my students. The platform is intuitive and the analytics are incredibly helpful.",
               },
               {
                 name: "Michael Chen",
                 role: "Professional",
-                image: "/placeholder.svg?height=80&width=80",
+                image: "/images/micheal.jpeg",
                 quote:
                   "I use Quizm to stay sharp in my field. The specialized quizzes keep me updated on industry knowledge and best practices.",
               },
@@ -245,7 +245,7 @@ const HomePage = () => {
               <div key={index} className="bg-white p-6 rounded-xl shadow-md">
                 <div className="flex items-center mb-4">
                   <img
-                    src={testimonial.image || "/placeholder.svg"}
+                    src={testimonial.image}
                     alt={testimonial.name}
                     className="w-12 h-12 rounded-full mr-4 object-cover"
                   />
@@ -287,7 +287,7 @@ const HomePage = () => {
             </div>
             <div className="md:w-2/5 p-10 hidden md:block">
               <img
-                src="/placeholder.svg?height=300&width=300"
+                src="/images/learning-illustration.jpeg"
                 alt="Learning illustration"
                 className="w-full max-w-sm mx-auto"
               />

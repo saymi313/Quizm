@@ -21,6 +21,7 @@ const getQuizzes = async (req, res) => {
         description: quiz.description,
         timeLimit: quiz.timeLimit,
         isPublished: quiz.isPublished,
+        imageUrl: quiz.imageUrl || null,
         createdAt: quiz.createdAt,
       }));
 
@@ -64,6 +65,7 @@ const getQuizById = async (req, res) => {
             })),
           })),
           isPublished: quiz.isPublished,
+          imageUrl: quiz.imageUrl || null,
           createdBy: quiz.createdBy,
           createdAt: quiz.createdAt,
           updatedAt: quiz.updatedAt,
@@ -85,7 +87,7 @@ const getQuizById = async (req, res) => {
 // @access  Private/Admin
 const createQuiz = async (req, res) => {
   try {
-    const { title, description, timeLimit, questions, isPublished } = req.body;
+    const { title, description, timeLimit, questions, isPublished, imageUrl } = req.body;
 
     // Clean questions and options - remove temporary IDs
     const cleanedQuestions = questions.map((q) => ({
@@ -103,6 +105,7 @@ const createQuiz = async (req, res) => {
       timeLimit,
       questions: cleanedQuestions,
       isPublished: isPublished || false,
+      imageUrl: imageUrl || null,
       createdBy: req.user.id,
     });
 
@@ -126,6 +129,7 @@ const createQuiz = async (req, res) => {
         })),
       })),
       isPublished: quiz.isPublished,
+      imageUrl: quiz.imageUrl || null,
       createdBy: quiz.createdBy,
       createdAt: quiz.createdAt,
       updatedAt: quiz.updatedAt,
@@ -143,7 +147,7 @@ const createQuiz = async (req, res) => {
 const updateQuiz = async (req, res) => {
   try {
     const { id } = req.params;
-    const { title, description, timeLimit, questions, isPublished } = req.body;
+    const { title, description, timeLimit, questions, isPublished, imageUrl } = req.body;
 
     const existingQuiz = await quizService.getQuizById(id);
 
@@ -156,6 +160,7 @@ const updateQuiz = async (req, res) => {
     if (description !== undefined) updateData.description = description;
     if (timeLimit !== undefined) updateData.timeLimit = timeLimit;
     if (isPublished !== undefined) updateData.isPublished = isPublished;
+    if (imageUrl !== undefined) updateData.imageUrl = imageUrl;
 
     if (questions !== undefined) {
       // Clean questions - preserve existing IDs if present
@@ -194,6 +199,7 @@ const updateQuiz = async (req, res) => {
           })),
         })),
         isPublished: updatedQuiz.isPublished,
+        imageUrl: updatedQuiz.imageUrl || null,
         createdBy: updatedQuiz.createdBy,
         createdAt: updatedQuiz.createdAt,
         updatedAt: updatedQuiz.updatedAt,

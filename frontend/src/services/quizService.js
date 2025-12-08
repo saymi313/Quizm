@@ -1,7 +1,20 @@
 import axios from 'axios';
 
-const BASE_URL = import.meta.env.VITE_API_URL || "http://54.87.191.72:5001";
-const API_URL = `${BASE_URL}/api/quiz`;
+// Get API URL with proper fallback
+const getBaseUrl = () => {
+  const envUrl = import.meta.env.VITE_API_URL;
+  // If VITE_API_URL is not set, use the backend URL from your deployment
+  if (!envUrl || envUrl === 'undefined') {
+    // Default to CloudFront backend URL
+    return 'https://d3niztflhdd0uf.cloudfront.net/api';
+  }
+  // Remove trailing slash if present
+  return envUrl.endsWith('/') ? envUrl.slice(0, -1) : envUrl;
+};
+
+const BASE_URL = getBaseUrl();
+// BASE_URL already includes /api, so we just append the endpoint
+const API_URL = `${BASE_URL}/quiz`;
 
 // Get auth token from local storage
 const getToken = () => {
@@ -20,7 +33,21 @@ const getQuizzes = async () => {
   } : {};
   
   const response = await axios.get(API_URL, config);
-  return response.data;
+  const data = response.data;
+  
+  // Ensure we always return an array
+  // Handle different response formats from backend
+  if (Array.isArray(data)) {
+    return data;
+  } else if (Array.isArray(data?.quizzes)) {
+    return data.quizzes;
+  } else if (Array.isArray(data?.data)) {
+    return data.data;
+  } else {
+    // If data is not an array, return empty array to prevent .map() errors
+    console.warn('getQuizzes: Expected array but got:', typeof data, data);
+    return [];
+  }
 };
 
 // Get quiz by ID

@@ -8,6 +8,7 @@ const RegisterPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [role, setRole] = useState('user'); // Default to 'user'
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   
@@ -43,7 +44,7 @@ const RegisterPage = () => {
     
     try {
       setLoading(true);
-      await authService.register({ name, email, password });
+      await authService.register({ name, email, password, role });
       navigate('/');
     } catch (error) {
       setError(
@@ -129,6 +130,25 @@ const RegisterPage = () => {
               placeholder="••••••••"
               required
             />
+          </div>
+
+          <div className="mb-6">
+            <label htmlFor="role" className="form-label">
+              Account Type
+            </label>
+            <select
+              id="role"
+              className="form-input"
+              value={role}
+              onChange={(e) => setRole(e.target.value)}
+              required
+            >
+              <option value="user">User</option>
+              <option value="admin">Admin</option>
+            </select>
+            <p className="text-sm text-gray-500 mt-1">
+              Select your account type. Admins can create and manage quizzes.
+            </p>
           </div>
           
           <button
